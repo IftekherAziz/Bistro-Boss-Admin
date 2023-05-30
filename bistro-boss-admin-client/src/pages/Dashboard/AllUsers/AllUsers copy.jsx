@@ -29,39 +29,8 @@ const AllUsers = () => {
         }
       });
   };
-
   // Delete user
-  const handleDelete = (user) => {
-    Swal.fire({
-      title: `Are you sure you want to delete ${user.name}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`http://localhost:5000/users/${user._id}`, {
-          method: "DELETE",
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
-            if (data.deletedCount > 0) {
-              refetch();
-              Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: `${user.name} has been deleted!`,
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }
-          });
-      }
-    });
-  };
-
+  const handleDelete = () => {};
   return (
     <div className="max-h-screen p-10 w-full">
       <Helmet>
@@ -94,7 +63,7 @@ const AllUsers = () => {
                   ) : (
                     <button
                       onClick={() => handleMakeAdmin(user)}
-                      className="btn btn-ghost bg-orange-600 text-white"
+                      className="btn btn-ghost bg-orange-600  text-white"
                     >
                       <FaUserShield></FaUserShield>
                     </button>
@@ -102,8 +71,8 @@ const AllUsers = () => {
                 </td>
                 <td>
                   <button
-                    onClick={() => handleDelete(user)}
-                    className="btn btn-ghost bg-red-600 text-white"
+                    onClick={() => handleDelete()}
+                    className="btn btn-ghost bg-red-600  text-white"
                   >
                     <FaTrashAlt></FaTrashAlt>
                   </button>

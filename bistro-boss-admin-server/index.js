@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -31,11 +32,11 @@ async function run() {
         const menuCollection = client.db("bistroDB").collection("menu");
         const reviewCollection = client.db("bistroDB").collection("reviews");
         const cartCollection = client.db("bistroDB").collection("carts");
-       
+
         // GET users data from MongoDB:
         app.get('/users', async (req, res) => {
-           const result = await userCollection.find().toArray();
-           res.send(result);
+            const result = await userCollection.find().toArray();
+            res.send(result);
         })
 
 
@@ -51,9 +52,29 @@ async function run() {
             else {
                 const result = await userCollection.insertOne(user);
                 res.send(result);
-            }        
+            }
         })
-        
+
+        // Update user role:
+        app.patch('/users/admin/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const updatedDoc = {
+                $set: { role: 'admin' },
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc);
+            res.send(result);
+
+        })
+
+        // Delete user:
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
+        })
+
         // GET menu data from MongoDB:
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray();
@@ -80,7 +101,7 @@ async function run() {
 
         // POST carts data on MongoDB:
         app.post('/carts', async (req, res) => {
-            const item = req.body;     
+            const item = req.body;
             const result = await cartCollection.insertOne(item);
             res.send(result);
         })

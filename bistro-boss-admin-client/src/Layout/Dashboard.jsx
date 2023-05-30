@@ -53,11 +53,12 @@ const Dashboard = () => {
       <div className="drawer-side bg-slate-900 text-white">
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
 
-        <img className="h-30" src={logo} alt="Logo" />
-
-        <ul className="menu px-4 w-75">
+        <ul className="menu px-4 w-80">
           {isAdmin ? (
             <>
+              <li>
+                <img src={logo} alt="" />
+              </li>
               <li>
                 <NavLink to="/dashboard/home">
                   <FaHome></FaHome> Admin Home
