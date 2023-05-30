@@ -32,26 +32,34 @@ async function run() {
         const reviewCollection = client.db("bistroDB").collection("reviews");
         const cartCollection = client.db("bistroDB").collection("carts");
        
-        // POST api/users
+        // POST users data on MongoDB:
         app.post('/users', async (req, res) => {
             const user = req.body;
-            const result = await userCollection.insertOne(user);
-            res.send(result);
+            console.log(user);
+            const query = { email: user.email };
+            const existingUser = await userCollection.findOne(query);
+            if (existingUser) {
+                return res.send({ success: false, message: 'Email already exists' });
+            }
+            else {
+                const result = await userCollection.insertOne(user);
+                res.send(result);
+            }        
         })
         
-        // GET api/menu
+        // GET menu data from MongoDB:
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray();
             res.send(result);
         })
 
-        // GET api/reviews
+        // GET reviews data from MongoDB:
         app.get('/reviews', async (req, res) => {
             const result = await reviewCollection.find().toArray();
             res.send(result);
         })
 
-        // cart collection apis
+        // GET carts data from MongoDB:
         app.get('/carts', async (req, res) => {
             const email = req.query.email;
 
@@ -63,14 +71,14 @@ async function run() {
             res.send(result);
         });
 
-        // POST api/carts
+        // POST carts data on MongoDB:
         app.post('/carts', async (req, res) => {
             const item = req.body;     
             const result = await cartCollection.insertOne(item);
             res.send(result);
         })
 
-        // DELETE api/carts
+        // DELETE carts data from MongoDB:
         app.delete('/carts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };

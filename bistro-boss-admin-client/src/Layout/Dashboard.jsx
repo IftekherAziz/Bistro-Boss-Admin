@@ -7,9 +7,28 @@ import {
 } from "react-icons/fa";
 import useCart from "../hooks/useCart";
 import { FaGripHorizontal } from "react-icons/fa";
+import { useContext } from "react";
+import { AuthContext } from "../providers/AuthProviders";
 
 const Dashboard = () => {
-  const [cart] = useCart();
+  const { user } = useContext(AuthContext);
+  const [cart, , isLoading] = useCart();
+
+  if (!user) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <progress className="progress w-56"></progress>
+      </div>
+    );
+  }
+
   return (
     <div className="drawer drawer-mobile ">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -43,9 +62,9 @@ const Dashboard = () => {
           <li>
             <NavLink to="/dashboard/mycart">
               <FaShoppingCart></FaShoppingCart> My Cart
-              <span className="badge inl ">
-                +{cart?.length || 0}
-              </span>
+              {isLoading || (
+                <span className="badge inl ">+{cart?.length || 0}</span>
+              )}
             </NavLink>
           </li>
           <div className="divider "></div>

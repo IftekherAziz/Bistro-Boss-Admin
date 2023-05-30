@@ -5,11 +5,9 @@ import { FaShoppingCart } from "react-icons/fa";
 import { AuthContext } from "../../../providers/AuthProviders";
 import useCart from "../../../hooks/useCart";
 
-
-
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
- const [cart] = useCart();
+  const [cart, , isLoading] = useCart();
 
   const handleLogout = () => {
     logOut()
@@ -18,8 +16,6 @@ const NavBar = () => {
         console.log(error);
       });
   };
-
-
 
   const navOptions = (
     <>
@@ -38,15 +34,18 @@ const NavBar = () => {
       <li>
         <Link>Contact us</Link>
       </li>
-      <li>
+     {/*  <li>
         <Link to="secret">Secret</Link>
-      </li>
+      </li> */}
+
       <li>
         <Link to="/dashboard/mycart">
-          <button className="btn gap-2">
+          <span className="flex gap-2">
             <FaShoppingCart></FaShoppingCart>
-            <div className="badge badge-primary">+{cart?.length || 0}</div>
-          </button>
+            {isLoading || (
+              <p className="badge badge-primary">+{cart?.length || 0}</p>
+            )}
+          </span>
         </Link>
       </li>
     </>
@@ -90,7 +89,7 @@ const NavBar = () => {
 
         <div className="navbar-end">
           {user ? (
-            <>       
+            <>
               <button onClick={handleLogout} className="btn btn-primary">
                 Logout
               </button>
