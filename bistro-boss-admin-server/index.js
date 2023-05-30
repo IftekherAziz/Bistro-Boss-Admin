@@ -32,6 +32,13 @@ async function run() {
         const reviewCollection = client.db("bistroDB").collection("reviews");
         const cartCollection = client.db("bistroDB").collection("carts");
        
+        // GET users data from MongoDB:
+        app.get('/users', async (req, res) => {
+           const result = await userCollection.find().toArray();
+           res.send(result);
+        })
+
+
         // POST users data on MongoDB:
         app.post('/users', async (req, res) => {
             const user = req.body;

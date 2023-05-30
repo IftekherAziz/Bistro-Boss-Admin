@@ -4,15 +4,24 @@ import {
   FaWallet,
   FaCalendarAlt,
   FaHome,
+  FaBook,
+  FaUsers,
+  FaUtensils,
+  FaListAlt,
+  FaShoppingBag,
 } from "react-icons/fa";
 import useCart from "../hooks/useCart";
 import { FaGripHorizontal } from "react-icons/fa";
 import { useContext } from "react";
 import { AuthContext } from "../providers/AuthProviders";
+import logo from "../assets/logo.png";
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [cart, , isLoading] = useCart();
+
+  // TODO: Load data from MongoDB to have dynamic isAdmin based on data
+  const isAdmin = true;
 
   if (!user) {
     return (
@@ -41,43 +50,85 @@ const Dashboard = () => {
         </label>
         <Outlet className="mt-10"></Outlet>
       </div>
-      <div className="drawer-side bg-slate-950 text-white">
+      <div className="drawer-side bg-slate-900 text-white">
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-        <ul className="menu p-4 w-80">
-          <li>
-            <NavLink to="/dashboard/home">
-              <FaHome></FaHome> User Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/dashboard/reservations">
-              <FaCalendarAlt></FaCalendarAlt> Reservations
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/dashboard/history">
-              <FaWallet></FaWallet> Payment History
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/dashboard/mycart">
-              <FaShoppingCart></FaShoppingCart> My Cart
-              {isLoading || (
-                <span className="badge inl ">+{cart?.length || 0}</span>
-              )}
-            </NavLink>
-          </li>
-          <div className="divider "></div>
+
+        <img className="h-30" src={logo} alt="Logo" />
+
+        <ul className="menu px-4 w-75">
+          {isAdmin ? (
+            <>
+              <li>
+                <NavLink to="/dashboard/home">
+                  <FaHome></FaHome> Admin Home
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/reservations">
+                  {" "}
+                  <FaUtensils></FaUtensils> Add Items
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/history">
+                  <FaWallet></FaWallet> Manage Items
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/history">
+                  <FaBook></FaBook> Manage Bookings
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/allusers">
+                  <FaUsers></FaUsers> All Users
+                </NavLink>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <NavLink to="/dashboard/home">
+                  <FaHome></FaHome> User Home
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/reservations">
+                  <FaCalendarAlt></FaCalendarAlt> Reservations
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/history">
+                  <FaWallet></FaWallet> Payment History
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/mycart">
+                  <FaShoppingCart></FaShoppingCart> My Cart
+                  {isLoading || (
+                    <span className="badge inl ">+{cart?.length || 0}</span>
+                  )}
+                </NavLink>
+              </li>
+            </>
+          )}
+
+          {/* <hr className="my-5"></hr> */}
+          <div className="divider"></div>
           <li>
             <NavLink to="/">
               <FaHome></FaHome> Home
             </NavLink>{" "}
           </li>
           <li>
-            <NavLink to="/menu"> Our Menu</NavLink>
+            <NavLink to="/menu">
+              <FaListAlt> </FaListAlt>Our Menu
+            </NavLink>
           </li>
           <li>
-            <NavLink to="/order/salad">Order Food</NavLink>
+            <NavLink to="/order/salad">
+              <FaShoppingBag></FaShoppingBag>Order Food
+            </NavLink>
           </li>
         </ul>
       </div>
