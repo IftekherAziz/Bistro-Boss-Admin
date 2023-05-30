@@ -17,9 +17,9 @@ const SocialLogin = () => {
 
       const saveUser = {
         name: loggedInUser.displayName,
-        email: loggedInUser.email,
+        email: loggedInUser.email
       };
-      
+
       // Save user data on MongoDB:
       fetch("http://localhost:5000/users", {
         method: "POST",
