@@ -10,6 +10,7 @@ import { AuthContext } from "../../providers/AuthProviders";
 import loginBg from "../../assets/account/account_bg.png";
 import loginImg from "../../assets/account/authentication2.png";
 import Swal from "sweetalert2";
+import SocialLogin from "../Shared/SocialLogin/SocialLogin";
 
 const Login = () => {
   const [disabled, setDisabled] = useState(true);
@@ -145,6 +146,7 @@ const Login = () => {
                 </Link>{" "}
               </small>
             </p>
+            <SocialLogin></SocialLogin>
           </div>
         </div>
       </div>

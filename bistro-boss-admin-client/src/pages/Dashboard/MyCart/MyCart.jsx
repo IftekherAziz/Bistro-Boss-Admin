@@ -6,7 +6,7 @@ import SectionTitle from "../../../components/SectionTitle/SectionTitle";
 
 const MyCart = () => {
   const [cart, refetch] = useCart();
-  console.log(cart);
+  // console.log(cart);
   // How does reduce work:
   const totalPrice = cart.reduce((sum, item) => item.price + sum, 0);
   const handleDelete = (item) => {

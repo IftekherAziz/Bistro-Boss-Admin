@@ -6,6 +6,7 @@ import signUpImg from "../../assets/account/authentication2.png";
 import { AuthContext } from "../../providers/AuthProviders";
 import { useContext } from "react";
 import Swal from "sweetalert2";
+import SocialLogin from "../Shared/SocialLogin/SocialLogin";
 
 const SignUp = () => {
   const {
@@ -182,6 +183,7 @@ const SignUp = () => {
                 </Link>{" "}
               </small>
             </p>
+            <SocialLogin></SocialLogin>
           </div>
         </div>
       </div>
