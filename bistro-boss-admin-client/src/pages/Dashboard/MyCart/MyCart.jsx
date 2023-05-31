@@ -48,8 +48,8 @@ const MyCart = () => {
         <h3 className="text-xl">Total Price: ${totalPrice}</h3>
         <button className="btn btn-warning btn-md">Pay Now</button>
       </div>
-      <div className="overflow-x-auto w-full">
-        <table className="table w-full">
+      <div className="overflow-x-auto w-full ">
+        <table className="table w-full mb-10">
           {/* head */}
           <thead>
             <tr>

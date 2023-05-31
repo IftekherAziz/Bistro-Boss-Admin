@@ -15,13 +15,14 @@ import { FaGripHorizontal } from "react-icons/fa";
 import { useContext } from "react";
 import { AuthContext } from "../providers/AuthProviders";
 import logo from "../assets/logo.png";
+import useAdmin from "../hooks/useAdmin";
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [cart, , isLoading] = useCart();
 
   // TODO: Load data from MongoDB to have dynamic isAdmin based on data
-  const isAdmin = true;
+    const [isAdmin] = useAdmin();
 
   if (!user) {
     return (

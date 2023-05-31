@@ -18,7 +18,7 @@ const verifyJWT = (req, res, next) => {
         return res.status(401).send({ error: true, message: 'UnAuthorized Access' });
 
     }
-    // bearer token
+    // Bearer token
     const token = authorization.split(' ')[1];
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
@@ -82,6 +82,20 @@ async function run() {
             }
         })
 
+        // GET user if admin: 
+        app.get('/users/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+
+            // Check admin or not
+            if(req.decoded.email !== email) {
+                return res.status(403).send({ message: 'Forbidden Access' });
+            }
+
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        })
+
         // Update user role:
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
@@ -121,7 +135,7 @@ async function run() {
             if (!email) {
                 res.send([]);
             }
-            
+
             const decodedEmail = req.decoded.email;
             if (email !== decodedEmail) {
                 return res.status(403).send({ error: true, message: 'Forbidden Access' });
