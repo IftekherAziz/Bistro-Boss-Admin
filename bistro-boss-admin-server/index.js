@@ -15,18 +15,18 @@ app.use(express.json());
 const verifyJWT = (req, res, next) => {
     const authorization = req.headers.authorization;
     if (!authorization) {
-        return res.status(401).send({ error: true, message: 'UnAuthorized Access' });
-
+        return res.status(401).send({ error: true, message: 'unauthorized access' });
     }
-    // Bearer token
+    // bearer token
     const token = authorization.split(' ')[1];
+
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(403).send({ error: true, message: 'Forbidden Access' });
+            return res.status(401).send({ error: true, message: 'unauthorized access' })
         }
         req.decoded = decoded;
+        next();
     })
-    next();
 }
 
 // MongoDB Connection:
@@ -54,56 +54,78 @@ async function run() {
         app.post('/jwt', async (req, res) => {
             const user = req.body;
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: '1d'
+                expiresIn: '1h'
             });
             res.send({ token });
         })
 
+        // Warning: use verifyJWT before using verifyAdmin
+        const verifyAdmin = async (req, res, next) => {
+            const email = req.decoded.email;
+            const query = { email: email }
+            const user = await userCollection.findOne(query);
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ error: true, message: 'forbidden message' });
+            }
+            next();
+        }
+
+        /**
+         * 0. do not show secure links to those who should not see the links
+         * 1. use jwt token: verifyJWT
+         * 2. use verifyAdmin middleware
+        */
 
         // GET users data from MongoDB:
-        app.get('/users', async (req, res) => {
+        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result);
-        })
+        });
 
 
         // POST users data on MongoDB:
         app.post('/users', async (req, res) => {
             const user = req.body;
-            console.log(user);
-            const query = { email: user.email };
+            const query = { email: user.email }
             const existingUser = await userCollection.findOne(query);
-            if (existingUser) {
-                return res.send({ success: false, message: 'Email already exists' });
-            }
-            else {
-                const result = await userCollection.insertOne(user);
-                res.send(result);
-            }
-        })
 
+            if (existingUser) {
+                return res.send({ message: 'User already exists' })
+            }
+
+            const result = await userCollection.insertOne(user);
+            res.send(result);
+        });
+
+        // security layer: verifyJWT
+        // email same
+        // check admin
         // GET user if admin: 
         app.get('/users/admin/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
 
-            // Check admin or not
-            if(req.decoded.email !== email) {
-                return res.status(403).send({ message: 'Forbidden Access' });
+            if (req.decoded.email !== email) {
+                res.send({ admin: false })
             }
 
-            const query = { email: email };
+            const query = { email: email }
             const user = await userCollection.findOne(query);
-            res.send({ isAdmin: user?.role === 'admin' });
+            const result = { admin: user?.role === 'admin' }
+            res.send(result);
         })
 
         // Update user role:
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
+            console.log(id);
             const filter = { _id: new ObjectId(id) };
-            const updatedDoc = {
-                $set: { role: 'admin' },
-            }
-            const result = await userCollection.updateOne(filter, updatedDoc);
+            const updateDoc = {
+                $set: {
+                    role: 'admin'
+                },
+            };
+
+            const result = await userCollection.updateOne(filter, updateDoc);
             res.send(result);
 
         })
